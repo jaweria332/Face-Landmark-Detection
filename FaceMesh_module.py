@@ -22,22 +22,33 @@ class FaceMeshModule():
         self.imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         self.results = self.faceMesh.process(self.imgRGB)
         if self.results.multi_face_landmarks:
+            faces=[]
             # Loop through the landmarks for all faces detected
             for faceLms in self.results.multi_face_landmarks:
-                self.mpDraw.draw_landmarks(img, faceLms, self.mpFaceMesh.FACE_CONNECTIONS, self.drawSpecs, self.drawSpecs)
+                if draw:
+                    self.mpDraw.draw_landmarks(img, faceLms, self.mpFaceMesh.FACE_CONNECTIONS, self.drawSpecs, self.drawSpecs)
 
-                for lm in faceLms.landmark:
+                face=[]
+                # To store face landmarks in list
+                for id,lm in faceLms.landmark:
                     # print(lm)
                     ih, iw, ic = img.shape
                     x, y = int(lm.x * iw), int(lm.y * ih)
-                    print(x,y)
+                    print(id,x,y)
+                    face.append([x,y])
+            faces.append(face)
+        return img
 
 def main():
     # For video stream
     cap = cv2.VideoCapture(0)
     pTime = 0
+
+    detector = FaceMeshModule()
+
     while True:
         success, img = cap.read()
+        img=detector.findFacelms(img,True)
         cTime = time.time()
         fps = 1 / (cTime - pTime)
         pTime = cTime
