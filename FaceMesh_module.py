@@ -21,8 +21,8 @@ class FaceMeshModule():
 
         self.imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         self.results = self.faceMesh.process(self.imgRGB)
+        faces = []
         if self.results.multi_face_landmarks:
-            faces=[]
             # Loop through the landmarks for all faces detected
             for faceLms in self.results.multi_face_landmarks:
                 if draw:
@@ -37,7 +37,7 @@ class FaceMeshModule():
                     print(id,x,y)
                     face.append([x,y])
             faces.append(face)
-        return img
+        return img, faces
 
 def main():
     # For video stream
