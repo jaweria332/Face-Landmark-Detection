@@ -2,27 +2,35 @@ import cv2
 import mediapipe as mp
 import time
 
+class FaceMeshModule():
+    def __init__(self, staticMode=False, maxFaces=2,minDetectionCon=0.5,minTrackCon=0.5):
+        self.staticMode=staticMode
+        self.maxFaces=maxFaces
+        self.minDetectionCon=minDetectionCon
+        self.minTrackCon=minTrackCon
 
-# mpDraw = mp.solutions.drawing_utils
-# mpFaceMesh = mp.solutions.face_mesh
-# faceMesh = mpFaceMesh.FaceMesh(max_num_faces=2)
-# # faceMesh only accept RGB image
-#
-# # To change thickness of dots and lines of landmarks
-# drawSpecs = mpDraw.DrawingSpec(thickness=1, circle_radius=2)
-#
-#     imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-#     results = faceMesh.process(imgRGB)
-#     if results.multi_face_landmarks:
-#         # Loop through the landmarks for all faces detected
-#         for faceLms in results.multi_face_landmarks:
-#             mpDraw.draw_landmarks(img, faceLms, mpFaceMesh.FACE_CONNECTIONS, drawSpecs, drawSpecs)
-#
-#             for lm in faceLms.landmark:
-#                 # print(lm)
-#                 ih, iw, ic = img.shape
-#                 x, y = int(lm.x * iw), int(lm.y * ih)
-#                 print(x,y)
+        self.mpDraw = mp.solutions.drawing_utils
+        self.mpFaceMesh = mp.solutions.face_mesh
+        self.faceMesh = self.mpFaceMesh.FaceMesh(self.staticMode,self.maxFaces, self.minDetectionCon, self.minTrackCon)
+        # faceMesh only accept RGB image
+
+        # To change thickness of dots and lines of landmarks
+        self.drawSpecs = self.mpDraw.DrawingSpec(thickness=1, circle_radius=2)
+
+    def findFacelms(self,img,draw=True):
+
+        self.imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        self.results = self.faceMesh.process(self.imgRGB)
+        if self.results.multi_face_landmarks:
+            # Loop through the landmarks for all faces detected
+            for faceLms in self.results.multi_face_landmarks:
+                self.mpDraw.draw_landmarks(img, faceLms, self.mpFaceMesh.FACE_CONNECTIONS, self.drawSpecs, self.drawSpecs)
+
+                for lm in faceLms.landmark:
+                    # print(lm)
+                    ih, iw, ic = img.shape
+                    x, y = int(lm.x * iw), int(lm.y * ih)
+                    print(x,y)
 
 def main():
     # For video stream
